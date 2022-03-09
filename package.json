@@ -2,8 +2,11 @@
   "name": "node2_weather_cli",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "bin": "./index.js",
+  "main": "weather.js",
+  "bin": {
+    "weather": "weather.js"
+  },
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,5 +16,10 @@
     "node"
   ],
   "author": "AHR",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.0",
+    "chalk": "^5.0.1",
+    "dedent-js": "^1.0.1"
+  }
 }
