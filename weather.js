@@ -1,6 +1,18 @@
 #!/usr/bin/env node
 import {getArgs} from './helpers/args.js'
-import {printHelp} from "./services/log.services.js";
+import {printHelp, printSuccess, printError} from "./services/log.services.js";
+import {saveKeyValue} from "./services/storage.service.js";
+
+const saveToken = async (token) => {
+    try {
+        await saveKeyValue('token', token);
+        printSuccess('Токен сохранен');
+    }
+    catch (e) {
+        printError('Ошибка сохранения токена: ' + e.message);
+    }
+}
+
 
 const initCLI = () => {
 
@@ -11,9 +23,10 @@ const initCLI = () => {
     }
     if(args.s) {
         // Сохранить город
+        printSuccess(`Город ${args.s} сохранен!`);
     }
     if(args.t) {
-        // Сохранить токен
+        return saveToken(args.t);
     }
     // Вывести погоду
 
