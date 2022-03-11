@@ -1,39 +1,37 @@
 import https from 'https';
 import {getKeyValue, TOKEN_DICTIONARY} from "./storage.service.js";
+import axios from "axios";
 
 const getWeather = async (city) => {
 
     const token = await getKeyValue(TOKEN_DICTIONARY.token);
-    const coord = {};
+    const coord = await getCityCoord(city, token);
+    const forcast = await getWeatherCityAxios(coord, token);
 
-    // http://api.openweathermap.org/geo/1.0/direct?q={city name},{state code},{country code}&limit={limit}&appid={API key}
-    const url = new URL('https://api.openweathermap.org/geo/1.0/direct');
-    url.searchParams.append('q', city);
-    url.searchParams.append('appid', token);
-
-    await https.get(url, (response) => {
-
-        let res = '';
-        response.on('data', (chunk) => {
-            res += chunk;
-        });
-
-        response.on('end', () => {
-
-            const resJson = JSON.parse(res);
-
-            coord.lat = resJson[0].lat;
-            coord.lon = resJson[0].lon;
-
-            getWeatherCity(coord);
-
-        });
-
-    });
+    return forcast;
 
 }
 
-const getWeatherCity = async (coord) => {
+const getCityCoord = async (city, token) => {
+
+    const { data } = await axios.get('https://api.openweathermap.org/geo/1.0/direct', {
+        params: {
+            q: city,
+            appid: token
+        }
+    });
+
+    const coord = {
+        lat: data[0].lat,
+        lon: data[0].lon,
+    };
+
+    return coord;
+
+}
+
+
+const getWeatherCityHTTPS = async (coord) => {
 
     const token = await getKeyValue(TOKEN_DICTIONARY.token);
     const url = new URL('https://api.openweathermap.org/data/2.5/weather');
@@ -53,17 +51,28 @@ const getWeatherCity = async (coord) => {
         response.on('end', () => {
 
             const resJson = JSON.parse(res);
-            console.log(resJson);
+            return resJson;
 
         });
 
     });
 
+}
 
+const getWeatherCityAxios = async (coord, token) => {
 
+    const { data } = await axios.get('https://api.openweathermap.org/data/2.5/weather', {
+        params: {
+            lat: coord.lat,
+            lon: coord.lon,
+            appid: token,
+            units: 'metric',
+            lang: 'ru'
+        }
+    });
 
+    return data;
 
 }
 
-console.log("работаем...")
 export {getWeather};

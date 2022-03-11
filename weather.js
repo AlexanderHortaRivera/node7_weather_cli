@@ -19,6 +19,16 @@ const saveToken = async (token) => {
     }
 }
 
+const getForcast = async (city) => {
+
+    const weather = await getWeather(city);
+    // console.log(weather);
+
+    printSuccess("Температура    : " + weather.main.temp);
+    printSuccess("Чувствуется как: " + weather.main.feels_like);
+
+}
+
 
 const initCLI = () => {
 
@@ -29,8 +39,7 @@ const initCLI = () => {
     }
     if(args.s) {
         // Сохранить город
-        getWeather(args.s);
-
+        getForcast(args.s);
     }
     if(args.t) {
         return saveToken(args.t);
